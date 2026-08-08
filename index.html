@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Emprendimientos — Detalles Minmin · Estrellitas de Azúcar · targetas Digitales · Picnic & experiencias</title>
+<title>Emprendimientos — Detalles Minmin · Estrellitas de Azúcar · Picnic Bunni · Chispa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Inter:wght@400;500;600&family=Fredoka:wght@400;600;700&family=Quicksand:wght@400;500;700&family=Josefin+Sans:wght@400;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -13,9 +13,9 @@
   --ink:#1F1B18; --paper:#F7F5F1; --gold:#C9A227;
   --minmin-1:#E8B4BC; --minmin-2:#C9A227; --minmin-3:#FAF3EC;
   --estr-1:#C9A6E8; --estr-2:#FF8FC7; --estr-3:#9FE8D8;
-  --luz-1:#A9D8E8; --luz-2:#FDF6ED; --luz-3:#F4C9C9;
   --picnic-1:#8FA679; --picnic-2:#E8B93F; --picnic-3:#FBF6E9;
-  --active-1: var(--paper); --active-2: var(--ink); --active-3: var(--paper);
+  --chispa-1:#A9D8E8; --chispa-2:#FDF6ED; --chispa-3:#F4C9C9;
+  --accent: #5C3A33;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -25,12 +25,12 @@ a{text-decoration:none;color:inherit;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .touch #cursor-dot, .touch #cursor-ring{display:none !important;}
 
-/* ---------- Custom cursor ---------- */
 #cursor-dot,#cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
 #cursor-dot{width:8px;height:8px;border-radius:50%;background:var(--ink);transition:background .3s;}
 #cursor-ring{width:34px;height:34px;font-size:20px;display:flex;align-items:center;justify-content:center;transition:transform .15s ease, opacity .3s;}
 
-/* ---------- Top bar ---------- */
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:var(--accent);z-index:1000;transition:background .4s;}
+
 .topbar{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:18px 5vw;background:rgba(247,245,241,.85);backdrop-filter:blur(8px);transition:background .4s;}
 .topbar .logo{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:20px;letter-spacing:.5px;}
 .topbar nav{display:flex;gap:22px;}
@@ -38,12 +38,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .topbar nav a.active{opacity:1;}
 .topbar nav a.active::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;background:currentColor;border-radius:2px;}
 
-/* ---------- Sweep transition overlay ---------- */
+#side-nav{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:500;display:flex;flex-direction:column;gap:14px;}
+#side-nav a{width:10px;height:10px;border-radius:50%;background:var(--ink);opacity:.25;transition:opacity .3s, transform .3s;position:relative;display:block;}
+#side-nav a.active{opacity:1;transform:scale(1.35);}
+#side-nav a::before{content:attr(data-label);position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:11px;letter-spacing:.04em;white-space:nowrap;background:var(--ink);color:#fff;padding:4px 10px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .2s;}
+#side-nav a:hover::before{opacity:1;}
+@media(max-width:900px){#side-nav{display:none;}}
+
 #sweep{position:fixed;inset:0;z-index:800;pointer-events:none;transform:translateY(101%);background:var(--ink);}
 
-/* ================= HUB ================= */
-#hub{display:flex;height:100vh;width:100%;}
-.door{position:relative;flex:1;height:100%;overflow:hidden;cursor:pointer;transition:flex 0.6s cubic-bezier(.22,1,.36,1);display:flex;align-items:flex-end;color:#fff;}
+#sparkles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.sparkle{position:absolute;border-radius:50%;background:var(--accent);opacity:.35;filter:blur(.5px);}
+
+#hub{display:flex;height:100vh;width:100%;position:relative;z-index:2;}
+.door{position:relative;flex:1;height:100%;overflow:hidden;cursor:pointer;transition:flex 0.6s cubic-bezier(.22,1,.36,1);display:flex;align-items:flex-end;color:#fff;opacity:0;transform:translateY(40px);}
 .door:hover{flex:2.6;}
 .door .door-bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.08);transition:transform .8s ease;}
 .door:hover .door-bg{transform:scale(1);}
@@ -56,21 +64,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .door:hover .door-desc{max-height:120px;opacity:1;}
 #door-minmin .door-tint{background:var(--minmin-1);}
 #door-estrellitas .door-tint{background:var(--estr-1);}
-#door-luz .door-tint{background:var(--luz-1);}
 #door-picnic .door-tint{background:var(--picnic-1);}
+#door-chispa .door-tint{background:var(--chispa-1);}
 .hub-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:20;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);opacity:.5;}
 
 @media(max-width:760px){
   #hub{flex-direction:column;height:auto;padding-top:70px;}
-  .door{flex:none;height:180px;}
+  .door{flex:none;height:180px;opacity:1;transform:none;}
   .door:hover{flex:none;}
   .door .door-title{writing-mode:horizontal-tb;font-size:24px;}
   .door .door-desc{max-height:80px;opacity:1;}
   .hub-hint{display:none;}
 }
 
-/* ================= BRAND SECTIONS ================= */
-.brand-section{position:relative;min-height:100vh;padding:120px 6vw 100px;overflow:hidden;}
+.brand-section{position:relative;min-height:100vh;padding:120px 6vw 100px;overflow:hidden;z-index:2;}
 .brand-inner{max-width:1080px;margin:0 auto;}
 .brand-head{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-bottom:70px;}
 .brand-kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;opacity:.75;}
@@ -80,10 +87,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .brand-list span{font-size:12.5px;padding:7px 14px;border-radius:100px;border:1px solid currentColor;opacity:.8;}
 .reveal{opacity:0;transform:translateY(28px);}
 
-/* Carousel */
-.carousel{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;}
+.carousel{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;perspective:900px;}
 .carousel-track{display:flex;height:100%;transition:transform .6s cubic-bezier(.65,0,.35,1);}
-.carousel-track img{width:100%;height:100%;object-fit:cover;flex-shrink:0;}
+.carousel-track img{width:100%;height:100%;object-fit:cover;flex-shrink:0;transition:transform .35s ease;}
 .carousel-arrows{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 12px;opacity:0;transition:opacity .3s;}
 .carousel:hover .carousel-arrows{opacity:1;}
 .carousel-arrows button{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;font-size:16px;}
@@ -91,19 +97,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .carousel-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55);transition:background .3s,transform .3s;}
 .carousel-dots span.active{background:#fff;transform:scale(1.3);}
 
-/* CTAs */
 .cta-row{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap;}
 .btn{position:relative;display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:100px;font-size:14px;font-weight:600;letter-spacing:.02em;}
 .btn-primary{background:var(--ink);color:#fff;}
 .btn-outline{border:1.5px solid currentColor;}
 
-/* Testimonials */
 .testimonials{margin-top:60px;position:relative;min-height:90px;}
 .testimonial{position:absolute;inset:0;opacity:0;transition:opacity .6s;font-family:'Fraunces',serif;font-style:italic;font-size:19px;line-height:1.5;max-width:640px;}
 .testimonial.active{opacity:1;position:relative;}
 .testimonial small{display:block;margin-top:10px;font-family:'Inter',sans-serif;font-style:normal;font-size:12px;opacity:.6;letter-spacing:.05em;text-transform:uppercase;}
 
-/* ---- Section identities ---- */
 #minmin{background:var(--minmin-3);}
 #minmin .brand-kicker,#minmin .btn-primary{color:var(--minmin-3);}
 #minmin .brand-title,#minmin .testimonial{font-family:'Fraunces',serif;font-style:italic;font-weight:500;color:#5C3A33;}
@@ -117,13 +120,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 #estrellitas .btn-primary{background:#FF8FC7;color:#3B1B33;}
 #estrellitas .brand-list span{border-color:#432A5E;color:#432A5E;}
 
-#luz{background:var(--luz-2);}
-#luz .brand-title{font-family:'Quicksand',sans-serif;font-weight:700;color:#2E5266;}
-#luz .brand-kicker{color:#2E5266;}
-#luz .testimonial{font-family:'Quicksand',sans-serif;font-style:normal;font-weight:500;color:#2E5266;}
-#luz .btn-primary{background:#A9D8E8;color:#1D3A47;}
-#luz .brand-list span{border-color:#2E5266;color:#2E5266;}
-
 #picnic{background:var(--picnic-3);}
 #picnic .brand-title{font-family:'Josefin Sans',sans-serif;font-weight:700;color:#4A5A34;}
 #picnic .brand-kicker{color:#4A5A34;}
@@ -131,20 +127,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 #picnic .btn-primary{background:#8FA679;color:#fff;}
 #picnic .brand-list span{border-color:#4A5A34;color:#4A5A34;}
 
+#chispa{background:var(--chispa-2);}
+#chispa .brand-title{font-family:'Quicksand',sans-serif;font-weight:700;color:#2E5266;}
+#chispa .brand-kicker{color:#2E5266;}
+#chispa .testimonial{font-family:'Quicksand',sans-serif;font-style:normal;font-weight:500;color:#2E5266;}
+#chispa .btn-primary{background:#A9D8E8;color:#1D3A47;}
+#chispa .brand-list span{border-color:#2E5266;color:#2E5266;}
+
 @media(max-width:760px){
   .brand-head{grid-template-columns:1fr;gap:34px;}
   .brand-section{padding:100px 6vw 70px;}
 }
 
-/* ---------- Floating WhatsApp ---------- */
 .wa-float{position:fixed;bottom:26px;right:26px;z-index:600;display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:100px;background:#25D366;color:#fff;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.18);transition:background .4s;}
 .wa-float svg{width:20px;height:20px;flex-shrink:0;}
 
-footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.5;}
+footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.5;position:relative;z-index:2;}
 </style>
 </head>
 <body>
 
+<div id="progress-bar"></div>
+<div id="sparkles"></div>
 <div id="cursor-dot"></div>
 <div id="cursor-ring">✦</div>
 <div id="sweep"></div>
@@ -154,14 +158,20 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
   <nav>
     <a href="#minmin" data-brand="minmin">Detalles Minmin</a>
     <a href="#estrellitas" data-brand="estrellitas">Estrellitas de Azúcar</a>
-    <a href="#luz" data-brand="luz">Chispa</a>
-    <a href="#picnic" data-brand="picnic">Picnic</a>
+    <a href="#picnic" data-brand="picnic">Picnic Bunni</a>
+    <a href="#chispa" data-brand="chispa">Chispa</a>
   </nav>
 </header>
 
-<!-- ================= HUB ================= -->
+<nav id="side-nav">
+  <a href="#minmin" data-brand="minmin" data-label="Detalles Minmin"></a>
+  <a href="#estrellitas" data-brand="estrellitas" data-label="Estrellitas de Azúcar"></a>
+  <a href="#picnic" data-brand="picnic" data-label="Picnic Bunni"></a>
+  <a href="#chispa" data-brand="chispa" data-label="Chispa"></a>
+</nav>
+
 <section id="hub">
-  <div class="door" id="door-minmin" data-target="minmin" data-color="#000080">
+  <div class="door" id="door-minmin" data-target="minmin" data-color="#5C3A33">
     <div class="door-bg" style="background-image:url('https://i.pinimg.com/736x/49/fc/83/49fc832f06eb3c1280e110743ba634d1.jpg')"></div>
     <div class="door-tint"></div>
     <div class="door-content">
@@ -179,15 +189,6 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
       <p class="door-desc">Postres tiernos y brillantes hechos en tandas chicas, para endulzar cualquier ocasión.</p>
     </div>
   </div>
-  <div class="door" id="door-luz" data-target="luz" data-color="#2E5266">
-    <div class="door-bg" style="background-image:url('https://picsum.photos/seed/luz-door/700/1000')"></div>
-    <div class="door-tint"></div>
-    <div class="door-content">
-      <div class="door-eyebrow">Bebés</div>
-      <div class="door-title">Luz</div>
-      <p class="door-desc">Piezas suaves y delicadas pensadas para los primeros meses.</p>
-    </div>
-  </div>
   <div class="door" id="door-picnic" data-target="picnic" data-color="#4A5A34">
     <div class="door-bg" style="background-image:url('https://i.pinimg.com/736x/b9/1e/75/b91e75345300e33fc0b0a593f47d00f4.jpg')"></div>
     <div class="door-tint"></div>
@@ -197,10 +198,18 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
       <p class="door-desc">Todo lo que necesitas para armar un picnic relajado al aire libre.</p>
     </div>
   </div>
+  <div class="door" id="door-chispa" data-target="chispa" data-color="#2E5266">
+    <div class="door-bg" style="background-image:url('https://www.marindelafuente.com.ar/wp-content/uploads/2024/10/invitaciones-digitales-873x420.jpg')"></div>
+    <div class="door-tint"></div>
+    <div class="door-content">
+      <div class="door-eyebrow">Invitaciones y tarjetas web</div>
+      <div class="door-title">Chispa</div>
+      <p class="door-desc">Invitaciones y páginas web de cumpleaños, baby shower y celebraciones, listas para compartir con un clic.</p>
+    </div>
+  </div>
   <div class="hub-hint">Pasa el mouse sobre cada puerta ↑</div>
 </section>
 
-<!-- ================= DETALLES MINMIN ================= -->
 <section id="minmin" class="brand-section">
   <div class="brand-inner">
     <div class="brand-head">
@@ -209,7 +218,7 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
         <h2 class="brand-title">Regalos hechos con cariño</h2>
         <p class="brand-copy">Armamos cada regalo pensando en la persona que la va a recibir: cumpleaños, aniversarios y esas fechas especiales.</p>
         <div class="brand-list">
-          <span>Cajas personalizadas</span><span>Detalles para parejas</span><span> Ramos personalizados</span>
+          <span>Cajas personalizadas</span><span>Detalles para parejas</span><span>Ramos personalizados</span>
         </div>
         <div class="cta-row">
           <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
@@ -218,7 +227,6 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
       </div>
       <div class="carousel reveal" data-brand="minmin">
         <div class="carousel-track">
-          <img src="https://es.pinterest.com/pin/758575131031873498/">
           <img src="https://i.pinimg.com/1200x/77/30/3f/77303ffee72ee0f8687e864cf8789ac9.jpg">
           <img src="https://i.pinimg.com/736x/ca/68/eb/ca68eb88f2b35b3632944b79ec69dcfa.jpg">
         </div>
@@ -228,12 +236,11 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
     </div>
     <div class="testimonials" data-brand="minmin">
       <p class="testimonial active">"Pedí una caja para el aniversario y la amé."<small>— Liliana</small></p>
-      <p class="testimonial">"Armo el regalo tal cual lo pedí."<small>— Sofia</small></p>
+      <p class="testimonial">"Armó el regalo tal cual lo pedí."<small>— Sofia</small></p>
     </div>
   </div>
 </section>
 
-<!-- ================= ESTRELLITAS DE AZUCAR ================= -->
 <section id="estrellitas" class="brand-section">
   <div class="brand-inner">
     <div class="brand-head">
@@ -246,7 +253,7 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
         </div>
         <div class="cta-row">
           <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
-          <a class="btn btn-outline magnetic" href="https://wa.me/51936149558?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Estrellitas%20Brillantes" target="_blank">WhatsApp</a>
+          <a class="btn btn-outline magnetic" href="https://wa.me/51936149558?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Estrellitas%20de%20Az%C3%BAcar" target="_blank">WhatsApp</a>
         </div>
       </div>
       <div class="carousel reveal" data-brand="estrellitas">
@@ -261,45 +268,11 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
     </div>
     <div class="testimonials" data-brand="estrellitas">
       <p class="testimonial active">"Los cupcakes no solo se ven tiernos, saben increíble."<small>— Viviana</small></p>
-      <p class="testimonial">"Muy lindos"<small>— Emy</small></p>
+      <p class="testimonial">"Muy lindos."<small>— Emy</small></p>
     </div>
   </div>
 </section>
 
-<!-- ================= LUZ ================= -->
-<section id="Chispa" class="brand-section">
-  <div class="brand-inner">
-    <div class="brand-head">
-      <div class="reveal">
-        <div class="brand-kicker">Chispa — Invitaciones y Tarjetas Web</div>
-        <h2 class="brand-title">Invitaciones que se comparten con un clic</h2>
-        <p class="brand-copy">Tarjetas y páginas web de cumpleaños, baby shower y otras celebraciones, diseñadas a tu gusto para que tus invitados vivan la sorpresa antes de llegar.</p>
-        <div class="brand-list">
-          <span>Sets de baby shower</span><span>Telas suaves</span><span>Ajuares</span>
-        </div>
-        <div class="cta-row">
-          <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
-          <a class="btn btn-outline magnetic" href="https://wa.me/51936149558?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Luz" target="_blank">WhatsApp</a>
-        </div>
-      </div>
-      <div class="carousel reveal" data-brand="luz">
-        <div class="carousel-track">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIvEUIe2DnjOaqa_F8fB77ANVmkUMtRfepb9D38zY0LA&s=10">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyNAY7Tc4GPkIL41MG6b4RmW6wBXWTkaEC_r8tnVuoXw&s=10">
-          <img src="https://www.marindelafuente.com.ar/wp-content/uploads/2024/10/invitaciones-digitales-873x420.jpg">
-        </div>
-        <div class="carousel-arrows"><button class="prev">‹</button><button class="next">›</button></div>
-        <div class="carousel-dots"></div>
-      </div>
-    </div>
-    <div class="testimonials" data-brand="luz">
-      <p class="testimonial active">"Mandé la tarjeta web por WhatsApp y todos preguntaron dónde la había hecho."<small>— Luz</small></p>
-      <p class="testimonial">"Me encantarón."<small>— Yuli</small></p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= PICNIC BUNNI ================= -->
 <section id="picnic" class="brand-section">
   <div class="brand-inner">
     <div class="brand-head">
@@ -332,7 +305,37 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
   </div>
 </section>
 
-<footer>Emprendimientos — Detalles Minmin · Estrellitas de Azúcar · Targetas digitales · Picnic Bunni</footer>
+<section id="chispa" class="brand-section">
+  <div class="brand-inner">
+    <div class="brand-head">
+      <div class="reveal">
+        <div class="brand-kicker">Chispa — Invitaciones y Tarjetas Web</div>
+        <h2 class="brand-title">Invitaciones que se comparten con un clic</h2>
+        <p class="brand-copy">Tarjetas y páginas web de cumpleaños, baby shower y otras celebraciones, diseñadas a tu gusto para que tus invitados vivan la sorpresa antes de llegar.</p>
+        <div class="brand-list">
+          <span>Tarjetas digitales</span><span>Páginas web de evento</span><span>Diseño a tu gusto</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
+          <a class="btn btn-outline magnetic" href="https://wa.me/51936149558?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Chispa" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+      <div class="carousel reveal" data-brand="chispa">
+        <div class="carousel-track">
+          <img src="https://www.marindelafuente.com.ar/wp-content/uploads/2024/10/invitaciones-digitales-873x420.jpg">
+        </div>
+        <div class="carousel-arrows"><button class="prev">‹</button><button class="next">›</button></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+    <div class="testimonials" data-brand="chispa">
+      <p class="testimonial active">"Mandé la tarjeta web por WhatsApp y todos preguntaron dónde la había hecho."<small>— Luz</small></p>
+      <p class="testimonial">"Me encantaron."<small>— Yuli</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Emprendimientos — Detalles Minmin · Estrellitas de Azúcar · Picnic Bunni · Chispa</footer>
 
 <a class="wa-float" id="wa-float" href="https://wa.me/51936149558?text=Hola%2C%20quiero%20saber%20m%C3%A1s" target="_blank">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18a7.9 7.9 0 0 1-4.03-1.1l-.29-.17-3 .78.8-2.92-.19-.3A7.93 7.93 0 1 1 12 20zm4.4-5.7c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.17-.7-.63-1.18-1.4-1.32-1.64-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.1.16 1.52.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z"/></svg>
@@ -343,7 +346,6 @@ footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;te
 const isTouch = matchMedia('(hover:none)').matches;
 if(isTouch) document.body.classList.add('touch');
 
-/* ---------- Custom cursor ---------- */
 const dot = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
 if(!isTouch){
@@ -351,9 +353,12 @@ if(!isTouch){
   window.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
   gsap.ticker.add(()=>{rx+=(mx-rx)*0.18;ry+=(my-ry)*0.18;ring.style.left=rx+'px';ring.style.top=ry+'px';});
 }
-const cursorIcons = {minmin:'🎀', estrellitas:'⭐', luz:'☁️', picnic:'🎀', hub:'✦'};
+const cursorIcons = {minmin:'🎀', estrellitas:'⭐', picnic:'🍃', chispa:'✨', hub:'✦'};
+const waNumbers = {minmin:'51936149558', estrellitas:'51936149558', picnic:'51936149558', chispa:'51936149558'};
+const waColors  = {minmin:'#5C3A33', estrellitas:'#FF8FC7', picnic:'#8FA679', chispa:'#A9D8E8'};
+const waLabels  = {minmin:'Escríbenos', estrellitas:'Escríbenos', picnic:'Escríbenos', chispa:'Escríbenos'};
+const accentColors = {hub:'#5C3A33', minmin:'#5C3A33', estrellitas:'#FF8FC7', picnic:'#8FA679', chispa:'#A9D8E8'};
 
-/* ---------- Sweep transition + hub doors ---------- */
 const sweep = document.getElementById('sweep');
 document.querySelectorAll('.door').forEach(door=>{
   door.addEventListener('click', ()=>{
@@ -366,20 +371,32 @@ document.querySelectorAll('.door').forEach(door=>{
       .set(sweep,{yPercent:101});
   });
 });
+document.querySelectorAll('#side-nav a').forEach(link=>{
+  link.addEventListener('click', e=>{
+    e.preventDefault();
+    const target = document.getElementById(link.dataset.brand);
+    gsap.set(sweep,{background:accentColors[link.dataset.brand]});
+    gsap.timeline()
+      .to(sweep,{yPercent:-101,duration:.5,ease:'power3.inOut'})
+      .add(()=>{ target.scrollIntoView({behavior:'instant',block:'start'}); })
+      .to(sweep,{yPercent:-202,duration:.5,ease:'power3.inOut'})
+      .set(sweep,{yPercent:101});
+  });
+});
 
-/* ---------- Topbar active state + cursor + wa-float per section ---------- */
-const waNumbers = {minmin:'51936149558', estrellitas:'51936149558', luz:'51936149558', picnic:'51936149558'};
-const waColors = {minmin:'#5C3A33', estrellitas:'#FF8FC7', luz:'#A9D8E8', picnic:'#8FA679'};
-const waLabels = {minmin:'Escríbenos', estrellitas:'Escríbenos', luz:'Escríbenos', picnic:'Escríbenos'};
-const navLinks = document.querySelectorAll('.topbar nav a');
+gsap.to('.door',{opacity:1,y:0,duration:.9,stagger:.12,ease:'power3.out',delay:.15});
+
+const navLinks = document.querySelectorAll('.topbar nav a, #side-nav a');
 const waFloat = document.getElementById('wa-float');
 const waLabel = document.getElementById('wa-float-label');
+const root = document.documentElement;
 
 const sectionObserver = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){
       const id = entry.target.id;
       navLinks.forEach(a=>a.classList.toggle('active', a.dataset.brand===id));
+      root.style.setProperty('--accent', accentColors[id] || accentColors.hub);
       if(waNumbers[id]){
         waFloat.href = `https://wa.me/${waNumbers[id]}?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20${encodeURIComponent(id)}`;
         waFloat.style.background = waColors[id];
@@ -393,14 +410,32 @@ const sectionObserver = new IntersectionObserver((entries)=>{
 },{threshold:.5});
 document.querySelectorAll('#hub, .brand-section').forEach(s=>sectionObserver.observe(s));
 
-/* ---------- Scroll reveal ---------- */
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  progressBar.style.width = pct + '%';
+});
+
+const sparkleWrap = document.getElementById('sparkles');
+for(let i=0;i<24;i++){
+  const s = document.createElement('div');
+  s.className = 'sparkle';
+  const size = Math.random()*4+2;
+  s.style.width = size+'px';
+  s.style.height = size+'px';
+  s.style.left = Math.random()*100+'vw';
+  s.style.top = Math.random()*100+'vh';
+  sparkleWrap.appendChild(s);
+  gsap.to(s,{y:'-=40',opacity:0,duration:4+Math.random()*4,repeat:-1,delay:Math.random()*5,ease:'sine.inOut',yoyo:true});
+}
+
 gsap.registerPlugin(ScrollTrigger);
 document.querySelectorAll('.reveal').forEach(el=>{
   gsap.to(el,{opacity:1,y:0,duration:.9,ease:'power3.out',
     scrollTrigger:{trigger:el,start:'top 85%'}});
 });
 
-/* ---------- Magnetic buttons ---------- */
 if(!isTouch){
   document.querySelectorAll('.magnetic').forEach(btn=>{
     btn.addEventListener('mousemove', e=>{
@@ -413,7 +448,6 @@ if(!isTouch){
   });
 }
 
-/* ---------- Carousels ---------- */
 document.querySelectorAll('.carousel').forEach(car=>{
   const track = car.querySelector('.carousel-track');
   const imgs = car.querySelectorAll('img');
@@ -430,12 +464,24 @@ document.querySelectorAll('.carousel').forEach(car=>{
     track.style.transform = `translateX(-${idx*100}%)`;
     dotsWrap.querySelectorAll('span').forEach((d,j)=>d.classList.toggle('active', j===idx));
   }
-  car.querySelector('.prev').addEventListener('click', ()=>go(idx-1));
-  car.querySelector('.next').addEventListener('click', ()=>go(idx+1));
-  setInterval(()=>go(idx+1), 4500);
+  if(imgs.length>1){
+    car.querySelector('.prev').addEventListener('click', ()=>go(idx-1));
+    car.querySelector('.next').addEventListener('click', ()=>go(idx+1));
+    setInterval(()=>go(idx+1), 4500);
+  } else {
+    car.querySelector('.carousel-arrows').style.display='none';
+  }
+  if(!isTouch){
+    car.addEventListener('mousemove', e=>{
+      const r = car.getBoundingClientRect();
+      const px = (e.clientX - r.left)/r.width - .5;
+      const py = (e.clientY - r.top)/r.height - .5;
+      imgs[idx].style.transform = `scale(1.05) rotateY(${px*8}deg) rotateX(${-py*8}deg)`;
+    });
+    car.addEventListener('mouseleave', ()=>{ imgs[idx].style.transform = ''; });
+  }
 });
 
-/* ---------- Testimonials rotation ---------- */
 document.querySelectorAll('.testimonials').forEach(wrap=>{
   const items = wrap.querySelectorAll('.testimonial');
   if(items.length<2) return;
