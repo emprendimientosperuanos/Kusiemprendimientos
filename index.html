@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grupo SM — Detalles Minmin · Estrellitas Brillantes · Luz · Picnic Bunni</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Inter:wght@400;500;600&family=Fredoka:wght@400;600;700&family=Quicksand:wght@400;500;700&family=Josefin+Sans:wght@400;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --ink:#1F1B18; --paper:#F7F5F1; --gold:#C9A227;
+  --minmin-1:#E8B4BC; --minmin-2:#C9A227; --minmin-3:#FAF3EC;
+  --estr-1:#C9A6E8; --estr-2:#FF8FC7; --estr-3:#9FE8D8;
+  --luz-1:#A9D8E8; --luz-2:#FDF6ED; --luz-3:#F4C9C9;
+  --picnic-1:#8FA679; --picnic-2:#E8B93F; --picnic-3:#FBF6E9;
+  --active-1: var(--paper); --active-2: var(--ink); --active-3: var(--paper);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden;}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+.touch #cursor-dot, .touch #cursor-ring{display:none !important;}
+
+/* ---------- Custom cursor ---------- */
+#cursor-dot,#cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cursor-dot{width:8px;height:8px;border-radius:50%;background:var(--ink);transition:background .3s;}
+#cursor-ring{width:34px;height:34px;font-size:20px;display:flex;align-items:center;justify-content:center;transition:transform .15s ease, opacity .3s;}
+
+/* ---------- Top bar ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:18px 5vw;background:rgba(247,245,241,.85);backdrop-filter:blur(8px);transition:background .4s;}
+.topbar .logo{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:20px;letter-spacing:.5px;}
+.topbar nav{display:flex;gap:22px;}
+.topbar nav a{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.55;transition:opacity .25s, color .25s;position:relative;}
+.topbar nav a.active{opacity:1;}
+.topbar nav a.active::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;background:currentColor;border-radius:2px;}
+
+/* ---------- Sweep transition overlay ---------- */
+#sweep{position:fixed;inset:0;z-index:800;pointer-events:none;transform:translateY(101%);background:var(--ink);}
+
+/* ================= HUB ================= */
+#hub{display:flex;height:100vh;width:100%;}
+.door{position:relative;flex:1;height:100%;overflow:hidden;cursor:pointer;transition:flex 0.6s cubic-bezier(.22,1,.36,1);display:flex;align-items:flex-end;color:#fff;}
+.door:hover{flex:2.6;}
+.door .door-bg{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.08);transition:transform .8s ease;}
+.door:hover .door-bg{transform:scale(1);}
+.door .door-tint{position:absolute;inset:0;mix-blend-mode:multiply;opacity:.55;}
+.door .door-content{position:relative;padding:38px 24px;width:100%;}
+.door .door-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-bottom:8px;}
+.door .door-title{font-family:'Fraunces',serif;font-size:26px;line-height:1.15;font-weight:600;writing-mode:vertical-rl;text-orientation:mixed;transition:writing-mode 0s;}
+.door:hover .door-title, .door.expanded .door-title{writing-mode:horizontal-tb;font-size:34px;}
+.door .door-desc{max-height:0;opacity:0;overflow:hidden;transition:max-height .5s ease, opacity .4s ease .1s;font-size:14px;margin-top:10px;max-width:320px;}
+.door:hover .door-desc{max-height:120px;opacity:1;}
+#door-minmin .door-tint{background:var(--minmin-1);}
+#door-estrellitas .door-tint{background:var(--estr-1);}
+#door-luz .door-tint{background:var(--luz-1);}
+#door-picnic .door-tint{background:var(--picnic-1);}
+.hub-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:20;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);opacity:.5;}
+
+@media(max-width:760px){
+  #hub{flex-direction:column;height:auto;padding-top:70px;}
+  .door{flex:none;height:180px;}
+  .door:hover{flex:none;}
+  .door .door-title{writing-mode:horizontal-tb;font-size:24px;}
+  .door .door-desc{max-height:80px;opacity:1;}
+  .hub-hint{display:none;}
+}
+
+/* ================= BRAND SECTIONS ================= */
+.brand-section{position:relative;min-height:100vh;padding:120px 6vw 100px;overflow:hidden;}
+.brand-inner{max-width:1080px;margin:0 auto;}
+.brand-head{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-bottom:70px;}
+.brand-kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;opacity:.75;}
+.brand-title{font-size:clamp(36px,5vw,58px);line-height:1.05;margin-bottom:18px;}
+.brand-copy{font-size:16px;line-height:1.6;opacity:.85;max-width:44ch;}
+.brand-list{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px;}
+.brand-list span{font-size:12.5px;padding:7px 14px;border-radius:100px;border:1px solid currentColor;opacity:.8;}
+.reveal{opacity:0;transform:translateY(28px);}
+
+/* Carousel */
+.carousel{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;}
+.carousel-track{display:flex;height:100%;transition:transform .6s cubic-bezier(.65,0,.35,1);}
+.carousel-track img{width:100%;height:100%;object-fit:cover;flex-shrink:0;}
+.carousel-arrows{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 12px;opacity:0;transition:opacity .3s;}
+.carousel:hover .carousel-arrows{opacity:1;}
+.carousel-arrows button{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.carousel-dots{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:7px;}
+.carousel-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55);transition:background .3s,transform .3s;}
+.carousel-dots span.active{background:#fff;transform:scale(1.3);}
+
+/* CTAs */
+.cta-row{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap;}
+.btn{position:relative;display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:100px;font-size:14px;font-weight:600;letter-spacing:.02em;}
+.btn-primary{background:var(--ink);color:#fff;}
+.btn-outline{border:1.5px solid currentColor;}
+
+/* Testimonials */
+.testimonials{margin-top:60px;position:relative;min-height:90px;}
+.testimonial{position:absolute;inset:0;opacity:0;transition:opacity .6s;font-family:'Fraunces',serif;font-style:italic;font-size:19px;line-height:1.5;max-width:640px;}
+.testimonial.active{opacity:1;position:relative;}
+.testimonial small{display:block;margin-top:10px;font-family:'Inter',sans-serif;font-style:normal;font-size:12px;opacity:.6;letter-spacing:.05em;text-transform:uppercase;}
+
+/* ---- Section identities ---- */
+#minmin{background:var(--minmin-3);}
+#minmin .brand-kicker,#minmin .btn-primary{color:var(--minmin-3);}
+#minmin .brand-title,#minmin .testimonial{font-family:'Fraunces',serif;font-style:italic;font-weight:500;color:#5C3A33;}
+#minmin .btn-primary{background:#5C3A33;}
+#minmin .brand-list span{border-color:#C9A227;}
+
+#estrellitas{background:linear-gradient(160deg,var(--estr-1),var(--estr-3) 120%);}
+#estrellitas .brand-title{font-family:'Fredoka',sans-serif;font-weight:700;color:#432A5E;}
+#estrellitas .brand-kicker{color:#432A5E;}
+#estrellitas .testimonial{font-family:'Fredoka',sans-serif;font-style:normal;font-weight:600;color:#432A5E;}
+#estrellitas .btn-primary{background:#FF8FC7;color:#3B1B33;}
+#estrellitas .brand-list span{border-color:#432A5E;color:#432A5E;}
+
+#luz{background:var(--luz-2);}
+#luz .brand-title{font-family:'Quicksand',sans-serif;font-weight:700;color:#2E5266;}
+#luz .brand-kicker{color:#2E5266;}
+#luz .testimonial{font-family:'Quicksand',sans-serif;font-style:normal;font-weight:500;color:#2E5266;}
+#luz .btn-primary{background:#A9D8E8;color:#1D3A47;}
+#luz .brand-list span{border-color:#2E5266;color:#2E5266;}
+
+#picnic{background:var(--picnic-3);}
+#picnic .brand-title{font-family:'Josefin Sans',sans-serif;font-weight:700;color:#4A5A34;}
+#picnic .brand-kicker{color:#4A5A34;}
+#picnic .testimonial{font-family:'Caveat',cursive;font-size:26px;font-weight:600;color:#4A5A34;}
+#picnic .btn-primary{background:#8FA679;color:#fff;}
+#picnic .brand-list span{border-color:#4A5A34;color:#4A5A34;}
+
+@media(max-width:760px){
+  .brand-head{grid-template-columns:1fr;gap:34px;}
+  .brand-section{padding:100px 6vw 70px;}
+}
+
+/* ---------- Floating WhatsApp ---------- */
+.wa-float{position:fixed;bottom:26px;right:26px;z-index:600;display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:100px;background:#25D366;color:#fff;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.18);transition:background .4s;}
+.wa-float svg{width:20px;height:20px;flex-shrink:0;}
+
+footer{padding:40px 6vw;text-align:center;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.5;}
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring">✦</div>
+<div id="sweep"></div>
+
+<header class="topbar">
+  <a href="#hub" class="logo">Grupo SM</a>
+  <nav>
+    <a href="#minmin" data-brand="minmin">Detalles Minmin</a>
+    <a href="#estrellitas" data-brand="estrellitas">Estrellitas Brillantes</a>
+    <a href="#luz" data-brand="luz">Luz</a>
+    <a href="#picnic" data-brand="picnic">Picnic Bunni</a>
+  </nav>
+</header>
+
+<!-- ================= HUB ================= -->
+<section id="hub">
+  <div class="door" id="door-minmin" data-target="minmin" data-color="#5C3A33">
+    <div class="door-bg" style="background-image:url('https://picsum.photos/seed/minmin-door/700/1000')"></div>
+    <div class="door-tint"></div>
+    <div class="door-content">
+      <div class="door-eyebrow">Regalos</div>
+      <div class="door-title">Detalles Minmin</div>
+      <p class="door-desc">Cajas y detalles con lazo para regalar momentos que se sienten hechos a mano.</p>
+    </div>
+  </div>
+  <div class="door" id="door-estrellitas" data-target="estrellitas" data-color="#432A5E">
+    <div class="door-bg" style="background-image:url('https://picsum.photos/seed/estrellitas-door/700/1000')"></div>
+    <div class="door-tint"></div>
+    <div class="door-content">
+      <div class="door-eyebrow">Postres kawaii</div>
+      <div class="door-title">Estrellitas Brillantes</div>
+      <p class="door-desc">Postres tiernos y brillantes hechos en tandas chicas, para endulzar cualquier ocasión.</p>
+    </div>
+  </div>
+  <div class="door" id="door-luz" data-target="luz" data-color="#2E5266">
+    <div class="door-bg" style="background-image:url('https://picsum.photos/seed/luz-door/700/1000')"></div>
+    <div class="door-tint"></div>
+    <div class="door-content">
+      <div class="door-eyebrow">Bebés</div>
+      <div class="door-title">Luz</div>
+      <p class="door-desc">Piezas suaves y delicadas pensadas para los primeros meses.</p>
+    </div>
+  </div>
+  <div class="door" id="door-picnic" data-target="picnic" data-color="#4A5A34">
+    <div class="door-bg" style="background-image:url('https://picsum.photos/seed/picnic-door/700/1000')"></div>
+    <div class="door-tint"></div>
+    <div class="door-content">
+      <div class="door-eyebrow">Picnics</div>
+      <div class="door-title">Picnic Bunni</div>
+      <p class="door-desc">Todo lo que necesitas para armar un picnic relajado al aire libre.</p>
+    </div>
+  </div>
+  <div class="hub-hint">Pasa el mouse sobre cada puerta ↑</div>
+</section>
+
+<!-- ================= DETALLES MINMIN ================= -->
+<section id="minmin" class="brand-section">
+  <div class="brand-inner">
+    <div class="brand-head">
+      <div class="reveal">
+        <div class="brand-kicker">Detalles Minmin — Regalos</div>
+        <h2 class="brand-title">Regalos con lazo, hechos con calma</h2>
+        <p class="brand-copy">Cajas de regalo armadas a mano, pensadas para cumpleaños, aniversarios y esos "porque sí" que se disfrutan más cuando llegan bien presentados.</p>
+        <div class="brand-list">
+          <span>Cajas personalizadas</span><span>Detalles para parejas</span><span>Envoltura con sello de cera</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
+          <a class="btn btn-outline magnetic" href="https://wa.me/51900000001?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Detalles%20Minmin" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+      <div class="carousel reveal" data-brand="minmin">
+        <div class="carousel-track">
+          <img src="https://picsum.photos/seed/minmin1/700/900">
+          <img src="https://picsum.photos/seed/minmin2/700/900">
+          <img src="https://picsum.photos/seed/minmin3/700/900">
+        </div>
+        <div class="carousel-arrows"><button class="prev">‹</button><button class="next">›</button></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+    <div class="testimonials" data-brand="minmin">
+      <p class="testimonial active">"Pedí una caja para el aniversario y llegó mejor de lo que imaginé, se nota el cuidado en cada detalle."<small>— Cliente Minmin</small></p>
+      <p class="testimonial">"Contesta rapidísimo por WhatsApp y arma el regalo tal cual lo pedí."<small>— Cliente Minmin</small></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ESTRELLITAS BRILLANTES ================= -->
+<section id="estrellitas" class="brand-section">
+  <div class="brand-inner">
+    <div class="brand-head">
+      <div class="reveal">
+        <div class="brand-kicker">Estrellitas Brillantes — Postres kawaii</div>
+        <h2 class="brand-title">Postres tiernos, hechos en tandas chicas ✦</h2>
+        <p class="brand-copy">Postres kawaii decorados a mano, ideales para cumpleaños, mesas dulces y antojos que merecen brillar un poco más.</p>
+        <div class="brand-list">
+          <span>Cupcakes decorados</span><span>Mesas dulces</span><span>Pedidos por encargo</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
+          <a class="btn btn-outline magnetic" href="https://wa.me/51900000002?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Estrellitas%20Brillantes" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+      <div class="carousel reveal" data-brand="estrellitas">
+        <div class="carousel-track">
+          <img src="https://picsum.photos/seed/estr1/700/900">
+          <img src="https://picsum.photos/seed/estr2/700/900">
+          <img src="https://picsum.photos/seed/estr3/700/900">
+        </div>
+        <div class="carousel-arrows"><button class="prev">‹</button><button class="next">›</button></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+    <div class="testimonials" data-brand="estrellitas">
+      <p class="testimonial active">"Los cupcakes no solo se ven tiernos, saben increíble. Los pedí para el cumple de mi hija y todos preguntaron quién los hizo."<small>— Cliente Estrellitas</small></p>
+      <p class="testimonial">"Armaron toda la mesa dulce siguiendo la paleta de colores que les pedí."<small>— Cliente Estrellitas</small></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LUZ ================= -->
+<section id="luz" class="brand-section">
+  <div class="brand-inner">
+    <div class="brand-head">
+      <div class="reveal">
+        <div class="brand-kicker">Luz — Bebés</div>
+        <h2 class="brand-title">Piezas suaves para los primeros meses</h2>
+        <p class="brand-copy">Ropa y accesorios delicados para bebés, elegidos pensando en la piel sensible y en esos regalos de baby shower que se guardan con cariño.</p>
+        <div class="brand-list">
+          <span>Sets de baby shower</span><span>Telas suaves</span><span>Ajuares</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
+          <a class="btn btn-outline magnetic" href="https://wa.me/51900000003?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Luz" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+      <div class="carousel reveal" data-brand="luz">
+        <div class="carousel-track">
+          <img src="https://picsum.photos/seed/luz1/700/900">
+          <img src="https://picsum.photos/seed/luz2/700/900">
+          <img src="https://picsum.photos/seed/luz3/700/900">
+        </div>
+        <div class="carousel-arrows"><button class="prev">‹</button><button class="next">›</button></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+    <div class="testimonials" data-brand="luz">
+      <p class="testimonial active">"La tela es súper suave y llegó justo antes del baby shower, quedó perfecto."<small>— Cliente Luz</small></p>
+      <p class="testimonial">"Me ayudaron a armar un set completo sin que tuviera que pensar en nada."<small>— Cliente Luz</small></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PICNIC BUNNI ================= -->
+<section id="picnic" class="brand-section">
+  <div class="brand-inner">
+    <div class="brand-head">
+      <div class="reveal">
+        <div class="brand-kicker">Picnic Bunni — Picnics</div>
+        <h2 class="brand-title">Todo listo para un picnic relajado</h2>
+        <p class="brand-copy">Armamos picnics completos, con mantel, cojines y decoración, para que solo tengas que llegar y disfrutar.</p>
+        <div class="brand-list">
+          <span>Picnics armados</span><span>Alquiler de implementos</span><span>Decoración temática</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary magnetic" href="#" target="_blank">Ver catálogo</a>
+          <a class="btn btn-outline magnetic" href="https://wa.me/51900000004?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20Picnic%20Bunni" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+      <div class="carousel reveal" data-brand="picnic">
+        <div class="carousel-track">
+          <img src="https://picsum.photos/seed/picnic1/700/900">
+          <img src="https://picsum.photos/seed/picnic2/700/900">
+          <img src="https://picsum.photos/seed/picnic3/700/900">
+        </div>
+        <div class="carousel-arrows"><button class="prev">‹</button><button class="next">›</button></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+    <div class="testimonials" data-brand="picnic">
+      <p class="testimonial active">"Llegamos y todo estaba armado, solo nos sentamos a disfrutar. Quedó hermoso."<small>— Cliente Picnic Bunni</small></p>
+      <p class="testimonial">"Coordinaron todo por WhatsApp y el picnic quedó tal cual lo imaginamos."<small>— Cliente Picnic Bunni</small></p>
+    </div>
+  </div>
+</section>
+
+<footer>Grupo SM — Detalles Minmin · Estrellitas Brillantes · Luz · Picnic Bunni</footer>
+
+<a class="wa-float" id="wa-float" href="https://wa.me/51900000000?text=Hola%2C%20quiero%20saber%20m%C3%A1s" target="_blank">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18a7.9 7.9 0 0 1-4.03-1.1l-.29-.17-3 .78.8-2.92-.19-.3A7.93 7.93 0 1 1 12 20zm4.4-5.7c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.17-.7-.63-1.18-1.4-1.32-1.64-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.1.16 1.52.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z"/></svg>
+  <span id="wa-float-label">Escríbenos</span>
+</a>
+
+<script>
+const isTouch = matchMedia('(hover:none)').matches;
+if(isTouch) document.body.classList.add('touch');
+
+/* ---------- Custom cursor ---------- */
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+if(!isTouch){
+  let mx=0,my=0,rx=0,ry=0;
+  window.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+  gsap.ticker.add(()=>{rx+=(mx-rx)*0.18;ry+=(my-ry)*0.18;ring.style.left=rx+'px';ring.style.top=ry+'px';});
+}
+const cursorIcons = {minmin:'🎀', estrellitas:'⭐', luz:'☁️', picnic:'🍃', hub:'✦'};
+
+/* ---------- Sweep transition + hub doors ---------- */
+const sweep = document.getElementById('sweep');
+document.querySelectorAll('.door').forEach(door=>{
+  door.addEventListener('click', ()=>{
+    const target = document.getElementById(door.dataset.target);
+    gsap.set(sweep,{background:door.dataset.color});
+    gsap.timeline()
+      .to(sweep,{yPercent:-101,duration:.5,ease:'power3.inOut'})
+      .add(()=>{ target.scrollIntoView({behavior:'instant',block:'start'}); })
+      .to(sweep,{yPercent:-202,duration:.5,ease:'power3.inOut'})
+      .set(sweep,{yPercent:101});
+  });
+});
+
+/* ---------- Topbar active state + cursor + wa-float per section ---------- */
+const waNumbers = {minmin:'51900000001', estrellitas:'51900000002', luz:'51900000003', picnic:'51900000004'};
+const waColors = {minmin:'#5C3A33', estrellitas:'#FF8FC7', luz:'#A9D8E8', picnic:'#8FA679'};
+const waLabels = {minmin:'Escríbenos', estrellitas:'Quiero mis postres', luz:'Escríbenos', picnic:'Arma mi picnic'};
+const navLinks = document.querySelectorAll('.topbar nav a');
+const waFloat = document.getElementById('wa-float');
+const waLabel = document.getElementById('wa-float-label');
+
+const sectionObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const id = entry.target.id;
+      navLinks.forEach(a=>a.classList.toggle('active', a.dataset.brand===id));
+      if(waNumbers[id]){
+        waFloat.href = `https://wa.me/${waNumbers[id]}?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20de%20${encodeURIComponent(id)}`;
+        waFloat.style.background = waColors[id];
+        waLabel.textContent = waLabels[id];
+        ring.textContent = cursorIcons[id];
+      } else {
+        ring.textContent = cursorIcons.hub;
+      }
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll('#hub, .brand-section').forEach(s=>sectionObserver.observe(s));
+
+/* ---------- Scroll reveal ---------- */
+gsap.registerPlugin(ScrollTrigger);
+document.querySelectorAll('.reveal').forEach(el=>{
+  gsap.to(el,{opacity:1,y:0,duration:.9,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 85%'}});
+});
+
+/* ---------- Magnetic buttons ---------- */
+if(!isTouch){
+  document.querySelectorAll('.magnetic').forEach(btn=>{
+    btn.addEventListener('mousemove', e=>{
+      const r = btn.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width/2;
+      const y = e.clientY - r.top - r.height/2;
+      gsap.to(btn,{x:x*0.3,y:y*0.4,duration:.3,ease:'power2.out'});
+    });
+    btn.addEventListener('mouseleave', ()=>gsap.to(btn,{x:0,y:0,duration:.4,ease:'elastic.out(1,0.4)'}));
+  });
+}
+
+/* ---------- Carousels ---------- */
+document.querySelectorAll('.carousel').forEach(car=>{
+  const track = car.querySelector('.carousel-track');
+  const imgs = car.querySelectorAll('img');
+  const dotsWrap = car.querySelector('.carousel-dots');
+  let idx = 0;
+  imgs.forEach((_,i)=>{
+    const d = document.createElement('span');
+    if(i===0) d.classList.add('active');
+    d.addEventListener('click', ()=>go(i));
+    dotsWrap.appendChild(d);
+  });
+  function go(i){
+    idx = (i+imgs.length)%imgs.length;
+    track.style.transform = `translateX(-${idx*100}%)`;
+    dotsWrap.querySelectorAll('span').forEach((d,j)=>d.classList.toggle('active', j===idx));
+  }
+  car.querySelector('.prev').addEventListener('click', ()=>go(idx-1));
+  car.querySelector('.next').addEventListener('click', ()=>go(idx+1));
+  setInterval(()=>go(idx+1), 4500);
+});
+
+/* ---------- Testimonials rotation ---------- */
+document.querySelectorAll('.testimonials').forEach(wrap=>{
+  const items = wrap.querySelectorAll('.testimonial');
+  if(items.length<2) return;
+  let i=0;
+  setInterval(()=>{
+    items[i].classList.remove('active');
+    i=(i+1)%items.length;
+    items[i].classList.add('active');
+  }, 4200);
+});
+</script>
+</body>
+</html>
